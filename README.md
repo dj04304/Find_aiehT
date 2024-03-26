@@ -63,8 +63,6 @@ Aieht이 어느날 알 수 없는 이유로 인해 사라져 버렸고,
 
 #### 구현 방법
 
-[!image]
-
 - 인터페이스와 추상클래스로 플레이어 상태 관리
 ```C#
 public interface IState
@@ -93,19 +91,25 @@ public abstract class StateMachine
     }   
 }
 ```
-  
+</br>
+
+![Player](./Assets/Images/PlayerGIF.gif)
 
 - sub-statemachine을 이용하여 플레이어 애니메이션 관리함
     - 스킬 및 점프시에 애니메이션이 캔슬되지 않게끔 sub-statemachine으로 나눔  
      
 
-[!image](애니메이터 이미지)
+</br>
+
+![Animator](./Assets/Images/20240122_232844.png)
 
 
 - 구글 스프레드 시트를 이용한 플레이어 레벨시 증가하는 데이터 관리  
     - 플레이어의 레벨에 따라 스탯이 달라지는데, 이를 좀 더 유연하게 관리하기 위해 구글 스프레드시트를 사용
 
-[!image](구글 스프레드 시트 이미지)
+</br>
+
+![GoogleSpreadSheet](./Assets/Images/20240326_135405.png)
 
 
 ### 2. 포션 인벤토리
@@ -121,5 +125,56 @@ public abstract class StateMachine
 - 포션 인벤토리는 HP포션 3개, SP포션 3개 총 6개로 고정이기 때문에 비용이 비교적 싼 배열로 생성
 - 포션 인벤토리 베이스를 생성하여 이를 상속받아 HP포션과 SP포션을 구현함
 - Onclick 이벤트로 포션을 클릭했을 때 해당 포션이 퀵슬롯에 장착되게끔 구현함
+
+</br>
+
+![Potion](./Assets/Images/PotionGIF.gif)
+
+
+### 3. 상점 구현
+
+#### 구현 및 이유
+
+- 기존 기획은 채집한 물건을 파는 것이 아닌 오로지 타이쿤으로만 골드를 벌 수 있고, 번 골드로 포션을 사는 식의 상점을 구현했음
+- 그러나 타이쿤보다 사냥 위주로 하는 사람도 있다고 생각이 들었기도 하고, 타이쿤을 어려워할 수 도 있다고 생각하여 인벤토리의 아이템을 팔 수 있게끔 구현하기로 결정함
+- 그리고 상점에서는 포션만 팔게끔 구현함
+
+#### 구현 방법
+
+- 상점에서 구매할 시에 구매할 포션은 마찬가지로 총 6개이기 때문에 리스트가 아닌 배열로 구현
+- 슬라이드를 이용하여 포션의 수량을 늘릴 수 있고, 뿐만 아니라 양 옆의 화살표로 +- 를 할 수 있게끔 구현함
+- 포션을 구매하면 바로 수량이 늘어나는 식으로 구현하였으며, 만약 골드가 부족할 경우 UI를 붉은색으로 변하게 하여 구매할 수 없게끔 구현하였음
+
+```C#
+ private void OnSliderValueChanged(float newValue)
+ {
+     _itemCurQuantity = Mathf.RoundToInt(newValue); 
+     int totalItemGold = _itemCurQuantity * _itemCurGold;
+
+     _itemQuantity.text = _itemCurQuantity.ToString();
+     _itemPrice.text = totalItemGold.ToString();
+
+     if (totalItemGold > _playerData.PlayerData.PlayerGold)
+     {
+         _itemPrice.color = Color.red;
+     }
+     else
+     {
+         _itemPrice.color = Color.black;
+     }
+ }
+
+```
+
+</br>
+
+![Shop](./Assets/Images/Shop.gif)
+
+
+### 4. 퀘스트
+
+#### 구현 및 이유
+
+#### 구현 방법
 
 ## ⚠ 트러블 슈팅
