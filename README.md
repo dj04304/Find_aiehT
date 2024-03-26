@@ -55,15 +55,71 @@ Aieht이 어느날 알 수 없는 이유로 인해 사라져 버렸고,
 
 ### 1. 플레이어 구현
 
-#### 구현 방법 및 이유
+#### 구현 및 이유
 
 - FSM 디자인 패턴을 이용하여 플레이어를 구현함
 - FSM 디자인 패턴을 채택한 이유는 플레이어가 상태마다 다양한 동작이 있으며, 상태 사이에도 여러 동작을 관리해야 하기 때문에 FSM 디자인 패턴을 사용했습니다.
 
+
+#### 구현 방법
+
+[!image]
+
+- 인터페이스와 추상클래스로 플레이어 상태 관리
 ```C#
+public interface IState
+{
+    public void Enter();
+    public void Exit();
+    public void HandleInput();
+    public void Update();
+    public void PhysicsUpdate();
+}
 
 ```
+
+``` C#
+public abstract class StateMachine
+{
+    protected IState currentState;
+
+    public void ChangeState(IState state)
+    {
+        currentState?.Exit();
+
+        currentState = state;
+
+        currentState?.Enter();
+    }   
+}
+```
   
-- 
+
+- sub-statemachine을 이용하여 플레이어 애니메이션 관리함
+    - 스킬 및 점프시에 애니메이션이 캔슬되지 않게끔 sub-statemachine으로 나눔  
+     
+
+[!image](애니메이터 이미지)
+
+
+- 구글 스프레드 시트를 이용한 플레이어 레벨시 증가하는 데이터 관리  
+    - 플레이어의 레벨에 따라 스탯이 달라지는데, 이를 좀 더 유연하게 관리하기 위해 구글 스프레드시트를 사용
+
+[!image](구글 스프레드 시트 이미지)
+
+
+### 2. 포션 인벤토리
+
+#### 구현 및 이유
+
+- 인벤토리는 채집한 아이템을 담는 인벤토리와 포션만 담겨있는 인벤토리로 나눔
+- 처음에는 포션과 인벤토리가 공존하는 인벤토리를 구현하였으나, 포션은 따로 관리하여 장착하는 형식은 어떻냐고 기획부분에서 의견이 나와서 포션은 장착하는 형식, 그리고 기존 인벤토리는 채집물을 담는 형식으로 구현했음
+- 상점 구현을 맡았는데, 상점에서 포션을 사는 것과 연결 지을 수 있기 때문에 포션 인벤토리를 구현하게 됨
+
+#### 구현 방법
+
+- 포션 인벤토리는 HP포션 3개, SP포션 3개 총 6개로 고정이기 때문에 비용이 비교적 싼 배열로 생성
+- 포션 인벤토리 베이스를 생성하여 이를 상속받아 HP포션과 SP포션을 구현함
+- Onclick 이벤트로 포션을 클릭했을 때 해당 포션이 퀵슬롯에 장착되게끔 구현함
 
 ## ⚠ 트러블 슈팅
